@@ -73,17 +73,44 @@ int contarVecinos(char *tablero, int col, int row, int x, int y) {
     return contador;
 }
 
+int Vecinosindividual(char *tablero, int col, int row, int x, int y,char celula) {
+    int contador = 0;
+
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            if (i == 0 && j == 0) {
+                continue;  // No contar la celda actual
+            }
+
+            int nuevaX = x + i;
+            int nuevaY = y + j;
+
+            if (nuevaX >= 0 && nuevaX < col && nuevaY >= 0 && nuevaY < row &&
+                *(tablero + nuevaX * row + nuevaY) == celula) {
+                contador++;
+            }
+        }
+    }
+    return contador;
+}
+
+
 void GuerraPorLaVida(char *tablero, int col, int row,char * tableroTemporal) {
 
 
     for (int i = 0; i < col; ++i) {
         for (int j = 0; j < row; ++j) {
-            int vecinos = contarVecinos((char *)tablero, col, row, i, j);
+            int Totalvecinos = contarVecinos((char *)tablero, col, row, i, j);
+            int vecinosX = Vecinosindividual((char *)tablero, col, row, i, j,'X');
+            int vecinosO = Vecinosindividual((char *)tablero, col, row, i, j,'O');
+
+            //printf("Vecinos X %i y vecinos O %i de %i,%i\n",vecinosX,vecinosO,i,j); ya jalan las varibales, falta evaluar las reglas
+
             char estadoActual = *(tablero + i * row + j);
 
             if (estadoActual == ' ') {
 
-                if (vecinos == 3) {
+                if (Totalvecinos == 3) {
                     if (contarVecinos((char *)tablero, col, row, i, j) >= 2) {
                         *(tableroTemporal + i * row + j) = 'X';
                     } else {
@@ -94,7 +121,7 @@ void GuerraPorLaVida(char *tablero, int col, int row,char * tableroTemporal) {
                 }
             } else {
 
-                if (vecinos < 2 || vecinos > 3 || contarVecinos((char *)tablero, col, row, i, j) < 2) {
+                if (Totalvecinos < 2 || Totalvecinos > 3 || contarVecinos((char *)tablero, col, row, i, j) < 2) {
                     *(tableroTemporal + i * row + j) = ' ';
                 } else {
                     *(tableroTemporal + i * row + j) = estadoActual;
